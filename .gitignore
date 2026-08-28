@@ -1,53 +1,32 @@
-```
-# WordPress specific
-wp-content/plugins/aeox-verify-temp/aeox-seo/cache/
-wp-content/plugins/aeox-verify-temp/aeox-seo/logs/
-*.log
+# Examples 1:
+
+(empty — output nothing)
+
+# Example 2 (Project with artifacts):
+
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+*.o
+*.obj
+dist/
+build/
 
 # Dependencies
+.venv/
+venv/
 node_modules/
-vendor/
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
 
 # Environment
 .env
 .env.local
 .env.*
 
-# IDE
+# Editors
 .vscode/
 .idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Build artifacts
-build/
-dist/
-target/
-*.tmp
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-*.so
-
-# Coverage
-coverage/
-htmlcov/
-.coverage
-
-# Database
-*.sqlite
-*.db
-
-# Backup files
-*~
-*.bak
-*.backup
-```
