@@ -9,12 +9,12 @@
  * @since 1.0.0
  */
 
-namespace AEOX\Engines\Schema;
 
-use AEOX\Core\Cache;
-use AEOX\Engines\Entity\Entity_Engine;
 
-class Schema_Engine {
+
+
+
+class AEOX_Schema_Engine {
 
 	/**
 	 * Cache instance
@@ -34,8 +34,8 @@ class Schema_Engine {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->cache         = new Cache();
-		$this->entity_engine = new Entity_Engine();
+		$this->cache         = AEOX_Cache::get_instance();
+		$this->entity_engine = new AEOX_Entity_Engine();
 	}
 
 	/**

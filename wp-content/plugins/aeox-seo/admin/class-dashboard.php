@@ -81,6 +81,10 @@ class AEOX_Dashboard {
      * Render main dashboard
      */
     public function render_dashboard() {
+        // Get recent analysis data
+        $recent_analyses = $this->get_recent_analyses(10);
+        $average_scores = $this->get_average_scores();
+        
         ?>
         <div class="wrap aeox-dashboard">
             <h1><?php esc_html_e('AEOX SEO Dashboard', 'aeox-seo'); ?></h1>
@@ -97,7 +101,9 @@ class AEOX_Dashboard {
                 <div class="aeox-stat-card">
                     <h3><?php esc_html_e('Overall Score', 'aeox-seo'); ?></h3>
                     <div class="aeox-big-score">
-                        <span class="aeox-score-value">--</span>
+                        <span class="aeox-score-value" style="color: <?php echo esc_attr($this->get_score_color($average_scores['overall'])); ?>">
+                            <?php echo esc_html($average_scores['overall'] > 0 ? $average_scores['overall'] : '--'); ?>
+                        </span>
                     </div>
                     <p class="aeox-score-label"><?php esc_html_e('Across all analyzed content', 'aeox-seo'); ?></p>
                 </div>
@@ -106,7 +112,9 @@ class AEOX_Dashboard {
                 <div class="aeox-stat-card aeox-card-seo">
                     <h3><?php esc_html_e('SEO', 'aeox-seo'); ?></h3>
                     <div class="aeox-medium-score">
-                        <span class="aeox-score-value">--</span>
+                        <span class="aeox-score-value" style="color: <?php echo esc_attr($this->get_score_color($average_scores['seo'])); ?>">
+                            <?php echo esc_html($average_scores['seo'] > 0 ? $average_scores['seo'] : '--'); ?>
+                        </span>
                     </div>
                     <p class="aeox-score-label"><?php esc_html_e('Technical & Content SEO', 'aeox-seo'); ?></p>
                 </div>
@@ -115,7 +123,9 @@ class AEOX_Dashboard {
                 <div class="aeox-stat-card aeox-card-aeo">
                     <h3><?php esc_html_e('AEO', 'aeox-seo'); ?></h3>
                     <div class="aeox-medium-score">
-                        <span class="aeox-score-value">--</span>
+                        <span class="aeox-score-value" style="color: <?php echo esc_attr($this->get_score_color($average_scores['aeo'])); ?>">
+                            <?php echo esc_html($average_scores['aeo'] > 0 ? $average_scores['aeo'] : '--'); ?>
+                        </span>
                     </div>
                     <p class="aeox-score-label"><?php esc_html_e('Answer Engine Optimization', 'aeox-seo'); ?></p>
                 </div>
@@ -124,7 +134,9 @@ class AEOX_Dashboard {
                 <div class="aeox-stat-card aeox-card-geo">
                     <h3><?php esc_html_e('GEO', 'aeox-seo'); ?></h3>
                     <div class="aeox-medium-score">
-                        <span class="aeox-score-value">--</span>
+                        <span class="aeox-score-value" style="color: <?php echo esc_attr($this->get_score_color($average_scores['geo'])); ?>">
+                            <?php echo esc_html($average_scores['geo'] > 0 ? $average_scores['geo'] : '--'); ?>
+                        </span>
                     </div>
                     <p class="aeox-score-label"><?php esc_html_e('Generative Engine Optimization', 'aeox-seo'); ?></p>
                 </div>
@@ -145,11 +157,42 @@ class AEOX_Dashboard {
                             </tr>
                         </thead>
                         <tbody>
+                            <?php if (empty($recent_analyses)) : ?>
                             <tr>
                                 <td colspan="5" class="aeox-no-data">
                                     <?php esc_html_e('No analysis data yet. Start by editing a post.', 'aeox-seo'); ?>
                                 </td>
                             </tr>
+                            <?php else : ?>
+                                <?php foreach ($recent_analyses as $analysis) : 
+                                    $post = get_post($analysis->post_id);
+                                    if (!$post) continue;
+                                ?>
+                                <tr>
+                                    <td>
+                                        <a href="<?php echo esc_url(get_edit_post_link($analysis->post_id)); ?>">
+                                            <?php echo esc_html(get_the_title($analysis->post_id)); ?>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span style="color: <?php echo esc_attr($this->get_score_color($analysis->seo_score)); ?>">
+                                            <?php echo esc_html($analysis->seo_score); ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span style="color: <?php echo esc_attr($this->get_score_color($analysis->aeo_score)); ?>">
+                                            <?php echo esc_html($analysis->aeo_score); ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span style="color: <?php echo esc_attr($this->get_score_color($analysis->geo_score)); ?>">
+                                            <?php echo esc_html($analysis->geo_score); ?>
+                                        </span>
+                                    </td>
+                                    <td><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($analysis->analyzed_at))); ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -295,6 +338,90 @@ class AEOX_Dashboard {
         <?php
     }
 
+    /**
+     * Get recent analyses from database
+     *
+     * @param int $limit Number of records to fetch.
+     * @return array Recent analysis records.
+     */
+    private function get_recent_analyses($limit = 10) {
+        global $wpdb;
+        
+        $table = $wpdb->prefix . 'aeox_analysis';
+        
+        $results = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM $table ORDER BY analyzed_at DESC LIMIT %d",
+            $limit
+        ));
+        
+        return $results ? $results : array();
+    }
+    
+    /**
+     * Get average scores across all analyzed content
+     *
+     * @return array Average scores.
+     */
+    private function get_average_scores() {
+        global $wpdb;
+        
+        $table = $wpdb->prefix . 'aeox_analysis';
+        
+        $row = $wpdb->get_row("
+            SELECT 
+                AVG(overall_score) as overall,
+                AVG(seo_score) as seo,
+                AVG(aeo_score) as aeo,
+                AVG(geo_score) as geo,
+                AVG(schema_score) as schema,
+                AVG(entity_score) as entity,
+                AVG(content_score) as content
+            FROM $table
+        ");
+        
+        if (!$row) {
+            return array(
+                'overall' => 0,
+                'seo' => 0,
+                'aeo' => 0,
+                'geo' => 0,
+                'schema' => 0,
+                'entity' => 0,
+                'content' => 0,
+            );
+        }
+        
+        return array(
+            'overall' => round($row->overall),
+            'seo' => round($row->seo),
+            'aeo' => round($row->aeo),
+            'geo' => round($row->geo),
+            'schema' => round($row->schema),
+            'entity' => round($row->entity),
+            'content' => round($row->content),
+        );
+    }
+    
+    /**
+     * Get color for score based on value
+     *
+     * @param int $score Score value (0-100).
+     * @return string Hex color code.
+     */
+    private function get_score_color($score) {
+        if ($score >= 90) {
+            return '#4caf50'; // Green - Excellent
+        } elseif ($score >= 80) {
+            return '#8bc34a'; // Light Green - Good
+        } elseif ($score >= 70) {
+            return '#ffeb3b'; // Yellow - Fair
+        } elseif ($score >= 60) {
+            return '#ff9800'; // Orange - Poor
+        } else {
+            return '#f44336'; // Red - Critical
+        }
+    }
+    
     /**
      * Render settings page (placeholder)
      */
