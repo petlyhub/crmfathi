@@ -23,7 +23,7 @@ class AEOX_GEO_Module {
      * Constructor
      */
     public function __construct() {
-        require_once AEOX_PLUGIN_DIR . 'geo/engine.php';
+        require_once AEOX_PLUGIN_DIR . 'engines/geo/class-aeox-geo-engine.php';
         $this->engine = new AEOX_GEO_Engine();
         
         $this->init_hooks();
