@@ -1,52 +1,53 @@
 ```
 # WordPress specific
-wp-content/cache/
-wp-content/uploads/
-wp-config.php
-*.sql
-
-# PHP related
-*.php~
-*.php.bak
-*.php.swp
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Build artifacts
-build/
-dist/
-*.min.js
-*.min.css
-*.bundle.js
+wp-content/plugins/aeox-verify-temp/aeox-seo/cache/
+wp-content/plugins/aeox-verify-temp/aeox-seo/logs/
+*.log
 
 # Dependencies
 node_modules/
 vendor/
 
-# Logs
-*.log
-error_log
+# Environment
+.env
+.env.local
+.env.*
 
-# Editor/IDE files
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*.tmp
 
-# System files
+# OS
 .DS_Store
 Thumbs.db
 
-# Environment
-.env
-.env.local
-*.env.*
+# Build artifacts
+build/
+dist/
+target/
+*.tmp
 
-# Cache and temporary
-.cache/
-tmp/
-temp/
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# Database
+*.sqlite
+*.db
+
+# Backup files
+*~
+*.bak
+*.backup
 ```
