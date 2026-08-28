@@ -1,0 +1,52 @@
+```
+# WordPress specific
+wp-content/cache/
+wp-content/uploads/
+wp-config.php
+*.sql
+
+# PHP related
+*.php~
+*.php.bak
+*.php.swp
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Build artifacts
+build/
+dist/
+*.min.js
+*.min.css
+*.bundle.js
+
+# Dependencies
+node_modules/
+vendor/
+
+# Logs
+*.log
+error_log
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Cache and temporary
+.cache/
+tmp/
+temp/
+```
