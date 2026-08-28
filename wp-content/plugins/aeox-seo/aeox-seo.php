@@ -272,11 +272,6 @@ final class AEOX_SEO {
         
         return array_merge($custom_links, $links);
     }
-    
-    public function render_dashboard() {
-        require_once AEOX_PLUGIN_DIR . 'admin/class-dashboard.php';
-        AEOX_Dashboard::render();
-    }
 }
 
 function aeox_seo_init() {
