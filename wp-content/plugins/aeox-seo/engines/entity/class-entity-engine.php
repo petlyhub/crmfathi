@@ -9,12 +9,12 @@
  * @since 1.0.0
  */
 
-namespace AEOX\Engines\Entity;
 
-use AEOX\Core\Database;
-use AEOX\Core\Cache;
 
-class Entity_Engine {
+
+
+
+class AEOX_Entity_Engine {
 
 	/**
 	 * Database instance
@@ -51,8 +51,8 @@ class Entity_Engine {
 	 */
 	public function __construct() {
 		global $wpdb;
-		$this->db    = new Database();
-		$this->cache = new Cache();
+		$this->db    = AEOX_Database::get_instance();
+		$this->cache = AEOX_Cache::get_instance();
 	}
 
 	/**
